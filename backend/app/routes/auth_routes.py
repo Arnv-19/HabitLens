@@ -2,12 +2,14 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from google.oauth2 import id_token
 from google.auth.transport import requests as google_requests
+from pydantic import BaseModel
 
 from app.database.database import get_db
 from app.database.models import User
 from app.schemas.user_schema import GoogleAuthRequest, AuthResponse, UserResponse
 from app.utils.jwt_utils import create_access_token
 from app.core.config import settings
+from app.core.security import get_current_user
 
 router = APIRouter(prefix="/auth", tags=["Authentication"])
 
@@ -44,7 +46,11 @@ def google_login(data: GoogleAuthRequest, db: Session = Depends(get_db)):
     # Generate JWT
     access_token = create_access_token({"sub": user.id, "email": user.email})
 
-from pydantic import BaseModel
+    return AuthResponse(
+        access_token=access_token,
+        user=UserResponse.model_validate(user),
+    )
+
 
 class AvatarUpdate(BaseModel):
     avatar_emoji: str
