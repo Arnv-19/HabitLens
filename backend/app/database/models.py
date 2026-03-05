@@ -76,7 +76,7 @@ class HabitPhoto(Base):
     user_id = Column(UUID(as_uuid=False), ForeignKey("users.id"), nullable=False)
     habit_id = Column(UUID(as_uuid=False), ForeignKey("habits.id"), nullable=False)
     task_id = Column(UUID(as_uuid=False), nullable=True)
-    image_path = Column(Text, nullable=False)
+    image_data = Column(Text, nullable=False)
     created_at = Column(DateTime, default=datetime.utcnow)
 
     user = relationship("User", back_populates="photos")

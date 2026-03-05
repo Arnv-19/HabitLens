@@ -9,7 +9,7 @@ from app.core.security import get_current_user
 from app.services.collage_service import generate_collage
 from app.services.email_service import send_daily_summary
 from app.services.reflection_service import generate_reflection
-from app.utils.image_utils import save_upload
+from app.utils.image_utils import process_upload
 from app.database.models import DailyScore
 from datetime import date
 
@@ -26,20 +26,19 @@ async def upload_photo(
 ):
     """Upload a photo for a habit task."""
     content = await file.read()
-    filename = f"{uuid.uuid4()}_{file.filename}"
-    filepath = save_upload(content, filename)
+    b64_image = process_upload(content, file.content_type)
 
     photo = HabitPhoto(
         user_id=user["sub"],
         habit_id=habit_id,
         task_id=task_id,
-        image_path=filepath,
+        image_data=b64_image,
     )
     db.add(photo)
     db.commit()
     db.refresh(photo)
 
-    return {"id": photo.id, "image_path": photo.image_path}
+    return {"id": photo.id, "success": True}
 
 
 @router.post("/generate")
@@ -49,9 +48,9 @@ def generate_daily_collage(
 ):
     """Generate today's chronological collage and optionally email summary."""
     user_id = user["sub"]
-    collage_path = generate_collage(db, user_id)
+    collage_b64 = generate_collage(db, user_id)
 
-    if not collage_path:
+    if not collage_b64:
         return {"message": "No photos to create collage today."}
 
     # Get reflection and effort
@@ -63,12 +62,11 @@ def generate_daily_collage(
 
     # Send email
     db_user = db.query(User).filter(User.id == user_id).first()
-    if db_user:
-        send_daily_summary(db_user.email, effort, reflection, collage_path)
+    if db_user and db_user.email:
+        send_daily_summary(db_user.email, effort, reflection, collage_b64)
 
     return {
         "message": "Collage generated and emailed!",
-        "collage_path": collage_path,
         "effort_index": effort,
         "reflection": reflection,
     }
