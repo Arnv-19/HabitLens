@@ -15,7 +15,7 @@ export default function DashboardPage() {
     const { user, loading: authLoading } = useAuth();
     const router = useRouter();
     const { habits, createHabit, deleteHabit, logHabit } = useHabits();
-    const { dashboard } = useDashboard();
+    const { dashboard, fetchDashboard } = useDashboard();
     const [modalOpen, setModalOpen] = useState(false);
     const [reflection, setReflection] = useState("");
 
@@ -153,7 +153,10 @@ export default function DashboardPage() {
             {/* Habit Grid */}
             <HabitGrid
                 habits={habits}
-                onLog={logHabit}
+                onLog={async (id, completed, effort) => {
+                    await logHabit(id, completed, effort);
+                    await fetchDashboard();
+                }}
                 onDelete={deleteHabit}
                 onUploadPhoto={handleUploadPhoto}
             />

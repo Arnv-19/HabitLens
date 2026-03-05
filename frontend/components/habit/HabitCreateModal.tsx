@@ -60,6 +60,7 @@ export default function HabitCreateModal({
     const [credit, setCredit] = useState(1);
     const [search, setSearch] = useState("");
     const [isCustom, setIsCustom] = useState(false);
+    const [tasks, setTasks] = useState<string[]>([]);
 
     const filteredHabits = PREDEFINED_HABITS[category]?.filter((h) =>
         h.toLowerCase().includes(search.toLowerCase())
@@ -72,7 +73,7 @@ export default function HabitCreateModal({
 
     const handleCustom = () => {
         if (!title.trim()) return;
-        onCreate({ title: title.trim(), category, credit });
+        onCreate({ title: title.trim(), category, credit, tasks: tasks.filter(t => t.trim() !== "") });
         resetAndClose();
     };
 
@@ -81,6 +82,7 @@ export default function HabitCreateModal({
         setCredit(1);
         setSearch("");
         setIsCustom(false);
+        setTasks([]);
         onClose();
     };
 
@@ -231,6 +233,63 @@ export default function HabitCreateModal({
                                         }}
                                     />
                                 </div>
+
+                                {/* Task List */}
+                                <div style={{ display: "flex", flexDirection: "column", gap: 8, marginTop: 4 }}>
+                                    <label style={{ color: "#888", fontSize: 13 }}>Sub-tasks (Optional):</label>
+                                    {tasks.map((task, idx) => (
+                                        <div key={idx} style={{ display: "flex", gap: 8 }}>
+                                            <input
+                                                type="text"
+                                                placeholder={`Task ${idx + 1}`}
+                                                value={task}
+                                                onChange={(e) => {
+                                                    const newTasks = [...tasks];
+                                                    newTasks[idx] = e.target.value;
+                                                    setTasks(newTasks);
+                                                }}
+                                                style={{
+                                                    flex: 1,
+                                                    padding: "8px 12px",
+                                                    borderRadius: 8,
+                                                    background: "#111",
+                                                    border: "1px solid #222",
+                                                    color: "#fff",
+                                                    fontSize: 14,
+                                                    outline: "none",
+                                                }}
+                                            />
+                                            <button
+                                                onClick={() => setTasks(tasks.filter((_, i) => i !== idx))}
+                                                style={{
+                                                    background: "rgba(255, 71, 87, 0.1)",
+                                                    border: "none",
+                                                    borderRadius: 8,
+                                                    padding: "0 12px",
+                                                    color: "#ff4757",
+                                                    cursor: "pointer",
+                                                }}
+                                            >
+                                                ✕
+                                            </button>
+                                        </div>
+                                    ))}
+                                    <button
+                                        onClick={() => setTasks([...tasks, ""])}
+                                        style={{
+                                            padding: "8px",
+                                            borderRadius: 8,
+                                            background: "rgba(255, 255, 255, 0.05)",
+                                            border: "1px dashed #333",
+                                            color: "#888",
+                                            fontSize: 13,
+                                            cursor: "pointer",
+                                        }}
+                                    >
+                                        + Add Task
+                                    </button>
+                                </div>
+
                                 <motion.button
                                     whileTap={{ scale: 0.95 }}
                                     onClick={handleCustom}

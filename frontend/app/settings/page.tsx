@@ -9,13 +9,24 @@ import AvatarPicker from "@/components/ui/AvatarPicker";
 import { api } from "@/lib/api";
 
 export default function SettingsPage() {
-    const { user, logout, loading } = useAuth();
+    const { user, updateUser, logout, loading } = useAuth();
     const router = useRouter();
     const [avatar, setAvatar] = useState(user?.avatar_emoji || "😊");
 
     useEffect(() => {
         if (!loading && !user) router.push("/");
     }, [user, loading, router]);
+
+    const handleAvatarChange = async (newEmoji: string) => {
+        try {
+            const updatedUser = await api.updateAvatar(newEmoji);
+            setAvatar(newEmoji);
+            updateUser(updatedUser);
+        } catch (e) {
+            console.error("Failed to update avatar", e);
+            alert("Failed to save avatar.");
+        }
+    };
 
     if (loading || !user) return null;
 
@@ -48,7 +59,7 @@ export default function SettingsPage() {
                     gap: 16,
                 }}
             >
-                <AvatarPicker value={avatar} onChange={setAvatar} />
+                <AvatarPicker value={avatar} onChange={handleAvatarChange} />
                 <div style={{ textAlign: "center" }}>
                     <h2 style={{ fontSize: 20, fontWeight: 700 }}>{user.name}</h2>
                     <p style={{ color: "#666", fontSize: 13, marginTop: 4 }}>{user.email}</p>

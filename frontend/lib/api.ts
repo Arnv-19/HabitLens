@@ -22,6 +22,8 @@ export const api = {
     // Auth
     googleLogin: (token: string) =>
         request("/auth/google", { method: "POST", body: JSON.stringify({ token }) }),
+    updateAvatar: (emoji: string) =>
+        request("/auth/me/avatar", { method: "PUT", body: JSON.stringify({ avatar_emoji: emoji }) }),
 
     // Habits
     getHabits: () => request("/habits"),

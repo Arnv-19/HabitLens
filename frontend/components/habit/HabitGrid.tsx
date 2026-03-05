@@ -36,13 +36,18 @@ export default function HabitGrid({
         );
     }
 
+    const sortedHabits = [...habits].sort((a, b) => {
+        if (a.is_fixed !== b.is_fixed) return a.is_fixed ? -1 : 1;
+        return a.category.localeCompare(b.category);
+    });
+
     return (
         <div style={{
             display: "grid",
             gridTemplateColumns: "repeat(auto-fill, minmax(160px, 1fr))",
             gap: 12,
         }}>
-            {habits.map((habit, i) => (
+            {sortedHabits.map((habit, i) => (
                 <motion.div
                     key={habit.id}
                     initial={{ opacity: 0, y: 20 }}
