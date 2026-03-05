@@ -1,0 +1,169 @@
+@import "tailwindcss";
+
+/* ===== AMOLED Dark Theme ===== */
+:root {
+  --bg-primary: #000000;
+  --bg-card: #111111;
+  --bg-card-hover: #1a1a1a;
+  --bg-elevated: #0a0a0a;
+  --text-primary: #ffffff;
+  --text-secondary: #a0a0a0;
+  --text-muted: #666666;
+  --border-subtle: #222222;
+  --accent-red: #ff4757;
+  --accent-green: #2ed573;
+  --accent-yellow: #ffa502;
+  --accent-blue: #3742fa;
+  --gradient-start: #667eea;
+  --gradient-end: #764ba2;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+  min-height: 100vh;
+}
+
+/* ===== Scrollbar ===== */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-primary);
+}
+::-webkit-scrollbar-thumb {
+  background: #333;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* ===== Smooth page transitions ===== */
+.page-transition {
+  animation: fadeSlideIn 0.4s ease-out;
+}
+@keyframes fadeSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ===== Glass card ===== */
+.glass-card {
+  background: rgba(17, 17, 17, 0.8);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 16px;
+}
+
+/* ===== Habit Category Colors ===== */
+.category-productivity { --cat-color: var(--accent-red); }
+.category-recreation { --cat-color: var(--accent-green); }
+.category-bonus { --cat-color: var(--accent-yellow); }
+.category-essential { --cat-color: var(--accent-blue); }
+
+/* ===== Bottom Nav ===== */
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  background: rgba(0, 0, 0, 0.92);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  padding: 8px 0 max(8px, env(safe-area-inset-bottom));
+}
+
+/* ===== Effort Slider ===== */
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 6px;
+  background: #222;
+  border-radius: 3px;
+  outline: none;
+}
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+  cursor: pointer;
+  box-shadow: 0 0 10px rgba(102, 126, 234, 0.4);
+}
+
+/* ===== Pulse Glow animation ===== */
+@keyframes pulseGlow {
+  0%, 100% { box-shadow: 0 0 8px rgba(102, 126, 234, 0.3); }
+  50% { box-shadow: 0 0 20px rgba(102, 126, 234, 0.6); }
+}
+.pulse-glow {
+  animation: pulseGlow 2s ease-in-out infinite;
+}
+
+/* ===== 3D Card Flip ===== */
+.flip-card-inner {
+  transform-style: preserve-3d;
+  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.flip-card-inner.flipped {
+  transform: rotateY(180deg);
+}
+.flip-card-front, .flip-card-back {
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+.flip-card-back {
+  transform: rotateY(180deg);
+}
+
+/* ===== React Calendar Overrides ===== */
+.react-calendar {
+  background: transparent !important;
+  border: none !important;
+  font-family: inherit !important;
+  width: 100% !important;
+  color: #fff !important;
+}
+.react-calendar__tile {
+  color: #fff !important;
+  border-radius: 8px !important;
+  padding: 10px !important;
+}
+.react-calendar__tile:hover {
+  background: #1a1a1a !important;
+}
+.react-calendar__tile--active {
+  background: linear-gradient(135deg, #667eea, #764ba2) !important;
+}
+.react-calendar__navigation button {
+  color: #fff !important;
+  font-size: 1rem !important;
+}
+.react-calendar__month-view__weekdays {
+  color: #666 !important;
+  text-transform: uppercase !important;
+  font-size: 0.7rem !important;
+}
