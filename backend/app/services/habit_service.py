@@ -47,6 +47,11 @@ def create_habit(db: Session, user_id: str, data: HabitCreate) -> Habit:
         for name in data.tasks:
             task = HabitTask(habit_id=habit.id, task_name=name)
             db.add(task)
+    elif data.category == "productivity":
+        # Auto-generate a default task covering the entire activity
+        # if a predefined productivity habit is created without tasks.
+        task = HabitTask(habit_id=habit.id, task_name=data.title)
+        db.add(task)
 
     db.commit()
     db.refresh(habit)

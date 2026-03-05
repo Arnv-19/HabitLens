@@ -14,7 +14,7 @@ import { useRouter } from "next/navigation";
 export default function DashboardPage() {
     const { user, loading: authLoading } = useAuth();
     const router = useRouter();
-    const { habits, createHabit, deleteHabit, logHabit } = useHabits();
+    const { habits, createHabit, deleteHabit, logHabit, createTask, deleteTask } = useHabits();
     const { dashboard, fetchDashboard } = useDashboard();
     const [modalOpen, setModalOpen] = useState(false);
     const [reflection, setReflection] = useState("");
@@ -159,6 +159,8 @@ export default function DashboardPage() {
                 }}
                 onDelete={deleteHabit}
                 onUploadPhoto={handleUploadPhoto}
+                onCreateTask={createTask}
+                onDeleteTask={deleteTask}
             />
 
             {/* Create Modal */}

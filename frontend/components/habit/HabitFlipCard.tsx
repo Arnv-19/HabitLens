@@ -11,6 +11,8 @@ export default function HabitFlipCard({
     onLog,
     onDelete,
     onUploadPhoto,
+    onCreateTask,
+    onDeleteTask,
     onCollapse,
 }: {
     habit: Habit;
@@ -18,11 +20,15 @@ export default function HabitFlipCard({
     onLog: (habitId: string, completed: number, effort: number) => void;
     onDelete: (id: string) => void;
     onUploadPhoto: (habitId: string, file: File) => void;
+    onCreateTask?: (habitId: string, taskName: string) => void;
+    onDeleteTask?: (taskId: string) => void;
     onCollapse: () => void;
 }) {
     const [flipped, setFlipped] = useState(false);
     const [effort, setEffort] = useState(50);
     const [checkedTasks, setCheckedTasks] = useState<Set<string>>(new Set());
+    const [newTaskName, setNewTaskName] = useState("");
+    const [isCreatingTask, setIsCreatingTask] = useState(false);
     const y = useMotionValue(0);
     const opacity = useTransform(y, [0, 150], [1, 0.3]);
 
@@ -206,6 +212,7 @@ export default function HabitFlipCard({
                                     />
                                     <span style={{
                                         fontSize: 14,
+                                        flex: 1,
                                         color: checkedTasks.has(task.id) ? "#fff" : "#aaa",
                                         textDecoration: checkedTasks.has(task.id)
                                             ? "line-through"
@@ -215,20 +222,121 @@ export default function HabitFlipCard({
                                     </span>
                                     {task.time && (
                                         <span style={{
-                                            marginLeft: "auto",
                                             fontSize: 11,
                                             color: "#555",
                                         }}>
                                             {task.time}
                                         </span>
                                     )}
+                                    {onDeleteTask && habit.category !== "essential" && (
+                                        <button
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                onDeleteTask(task.id);
+                                            }}
+                                            style={{
+                                                background: "transparent",
+                                                border: "none",
+                                                color: "#555",
+                                                cursor: "pointer",
+                                                fontSize: 12,
+                                                padding: "4px",
+                                            }}
+                                            title="Delete Task"
+                                        >
+                                            ✕
+                                        </button>
+                                    )}
                                 </motion.label>
                             ))}
 
                             {habit.tasks.length === 0 && (
-                                <p style={{ color: "#555", fontSize: 13, textAlign: "center", padding: 20 }}>
-                                    No tasks yet. Add tasks from the API.
+                                <p style={{ color: "#555", fontSize: 13, textAlign: "center", padding: 10 }}>
+                                    No tasks yet.
                                 </p>
+                            )}
+
+                            {onCreateTask && (
+                                isCreatingTask ? (
+                                    <div style={{ display: "flex", gap: 8, marginTop: 8 }}>
+                                        <input
+                                            type="text"
+                                            value={newTaskName}
+                                            onChange={(e) => setNewTaskName(e.target.value)}
+                                            placeholder="Task name"
+                                            style={{
+                                                flex: 1,
+                                                padding: "6px 12px",
+                                                borderRadius: 8,
+                                                background: "#111",
+                                                border: "1px solid #222",
+                                                color: "#fff",
+                                                fontSize: 13,
+                                                outline: "none",
+                                            }}
+                                            autoFocus
+                                            onKeyDown={(e) => {
+                                                if (e.key === 'Enter' && newTaskName.trim()) {
+                                                    onCreateTask(habit.id, newTaskName.trim());
+                                                    setNewTaskName("");
+                                                    setIsCreatingTask(false);
+                                                }
+                                                if (e.key === 'Escape') setIsCreatingTask(false);
+                                            }}
+                                        />
+                                        <button
+                                            onClick={() => {
+                                                if (newTaskName.trim()) {
+                                                    onCreateTask(habit.id, newTaskName.trim());
+                                                    setNewTaskName("");
+                                                }
+                                                setIsCreatingTask(false);
+                                            }}
+                                            style={{
+                                                padding: "6px 12px",
+                                                borderRadius: 8,
+                                                background: color,
+                                                color: "#fff",
+                                                border: "none",
+                                                cursor: "pointer",
+                                                fontSize: 13,
+                                                fontWeight: 600,
+                                            }}
+                                        >
+                                            Add
+                                        </button>
+                                        <button
+                                            onClick={() => setIsCreatingTask(false)}
+                                            style={{
+                                                padding: "6px 12px",
+                                                borderRadius: 8,
+                                                background: "#111",
+                                                color: "#888",
+                                                border: "1px solid #222",
+                                                cursor: "pointer",
+                                                fontSize: 13,
+                                            }}
+                                        >
+                                            Cancel
+                                        </button>
+                                    </div>
+                                ) : (
+                                    <button
+                                        onClick={() => setIsCreatingTask(true)}
+                                        style={{
+                                            padding: "8px",
+                                            borderRadius: 8,
+                                            background: "rgba(255, 255, 255, 0.05)",
+                                            border: "1px dashed #333",
+                                            color: "#888",
+                                            fontSize: 13,
+                                            cursor: "pointer",
+                                            marginTop: 8,
+                                        }}
+                                    >
+                                        + Add Task
+                                    </button>
+                                )
                             )}
                         </div>
                     </div>

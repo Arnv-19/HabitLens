@@ -60,5 +60,15 @@ export function useHabits() {
         });
     };
 
-    return { habits, loading, error, fetchHabits, createHabit, deleteHabit, logHabit };
+    const createTask = async (habitId: string, taskName: string) => {
+        await api.createTask({ habit_id: habitId, task_name: taskName });
+        await fetchHabits();
+    };
+
+    const deleteTask = async (taskId: string) => {
+        await api.deleteTask(taskId);
+        await fetchHabits();
+    };
+
+    return { habits, loading, error, fetchHabits, createHabit, deleteHabit, logHabit, createTask, deleteTask };
 }

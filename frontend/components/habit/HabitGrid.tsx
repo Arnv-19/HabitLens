@@ -8,11 +8,15 @@ export default function HabitGrid({
     onLog,
     onDelete,
     onUploadPhoto,
+    onCreateTask,
+    onDeleteTask,
 }: {
     habits: Habit[];
     onLog: (habitId: string, completed: number, effort: number) => void;
     onDelete: (id: string) => void;
     onUploadPhoto: (habitId: string, file: File) => void;
+    onCreateTask?: (habitId: string, taskName: string) => void;
+    onDeleteTask?: (taskId: string) => void;
 }) {
     if (habits.length === 0) {
         return (
@@ -59,6 +63,8 @@ export default function HabitGrid({
                         onLog={onLog}
                         onDelete={onDelete}
                         onUploadPhoto={onUploadPhoto}
+                        onCreateTask={onCreateTask}
+                        onDeleteTask={onDeleteTask}
                     />
                 </motion.div>
             ))}

@@ -21,10 +21,10 @@ def create_task(
     if not habit:
         raise HTTPException(status_code=404, detail="Habit not found")
 
-    if habit.category in ("productivity", "essential"):
+    if habit.category == "essential":
         raise HTTPException(
             status_code=403,
-            detail=f"Cannot add tasks to {habit.category} habits. Tasks are fixed.",
+            detail="Cannot add tasks to essential habits. Tasks are fixed.",
         )
 
     parsed_time = None
@@ -57,10 +57,10 @@ def delete_task(
     if not habit:
         raise HTTPException(status_code=404, detail="Habit not found")
 
-    if habit.category in ("productivity", "essential"):
+    if habit.category == "essential":
         raise HTTPException(
             status_code=403,
-            detail=f"Cannot delete tasks from {habit.category} habits.",
+            detail="Cannot delete tasks from essential habits.",
         )
 
     db.delete(task)
