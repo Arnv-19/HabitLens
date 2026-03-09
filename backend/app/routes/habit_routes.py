@@ -2,10 +2,11 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from typing import List
 
+from app.database.models import Habit
 from app.database.database import get_db
 from app.core.security import get_current_user
-from app.schemas.habit_schema import HabitCreate, HabitResponse
-from app.services.habit_service import create_habit, get_habits, delete_habit
+from app.schemas.habit_schema import HabitCreate, HabitResponse, HabitUpdate
+from app.services.habit_service import create_habit, get_habits, delete_habit, update_habit
 
 router = APIRouter(prefix="/habits", tags=["Habits"])
 
@@ -27,10 +28,34 @@ def create_new_habit(
     user: dict = Depends(get_current_user),
 ):
     """Create a new habit with category-specific behavior."""
-    valid_categories = ("productivity", "recreation", "bonus", "essential")
-    if data.category not in valid_categories:
-        raise HTTPException(status_code=400, detail=f"Category must be one of: {valid_categories}")
     return create_habit(db, user["sub"], data)
+
+
+@router.get("/{habit_id}", response_model=HabitResponse)
+def get_habit(
+    habit_id: str,
+    db: Session = Depends(get_db),
+    user: dict = Depends(get_current_user),
+):
+    """Get a single habit by ID."""
+    habit = db.query(Habit).filter(Habit.id == habit_id, Habit.user_id == user["sub"]).first()
+    if not habit:
+        raise HTTPException(status_code=404, detail="Habit not found")
+    return habit
+
+
+@router.put("/{habit_id}", response_model=HabitResponse)
+def modify_habit(
+    habit_id: str,
+    data: HabitUpdate,
+    db: Session = Depends(get_db),
+    user: dict = Depends(get_current_user),
+):
+    """Update a habit's title, category, or credit."""
+    habit = update_habit(db, habit_id, user["sub"], data.model_dump(exclude_unset=True))
+    if not habit:
+        raise HTTPException(status_code=404, detail="Habit not found")
+    return habit
 
 
 @router.delete("/{habit_id}", status_code=status.HTTP_204_NO_CONTENT)

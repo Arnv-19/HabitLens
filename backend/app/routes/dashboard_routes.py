@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 from datetime import date, timedelta
+from typing import Optional
 
 from app.database.database import get_db
 from app.database.models import DailyScore, Habit, HabitLog
@@ -20,6 +21,51 @@ def create_habit_log(
     """Log habit completion and compute score."""
     log = log_habit(db, user["sub"], data.habit_id, data.tasks_completed, data.effort_percent)
     return log
+
+
+@router.get("/habit-log", response_model=list[HabitLogResponse])
+def get_habit_logs(
+    habit_id: Optional[str] = None,
+    start_date: Optional[date] = None,
+    end_date: Optional[date] = None,
+    db: Session = Depends(get_db),
+    user: dict = Depends(get_current_user),
+):
+    """Fetch logs optionally filtered by habit, start_date, and end_date."""
+    user_id = user["sub"]
+    
+    query = db.query(HabitLog).join(Habit).filter(Habit.user_id == user_id)
+    
+    if habit_id:
+        query = query.filter(HabitLog.habit_id == habit_id)
+    if start_date:
+        query = query.filter(HabitLog.date >= start_date)
+    if end_date:
+        query = query.filter(HabitLog.date <= end_date)
+        
+    return query.order_by(HabitLog.date.desc()).all()
+
+
+@router.delete("/habit-log/{log_id}", status_code=204)
+def delete_habit_log(
+    log_id: str,
+    db: Session = Depends(get_db),
+    user: dict = Depends(get_current_user),
+):
+    """Delete a habit log entry. Only recalculates score if log was for today."""
+    log = db.query(HabitLog).join(Habit).filter(HabitLog.id == log_id, Habit.user_id == user["sub"]).first()
+    if not log:
+        from fastapi import HTTPException
+        raise HTTPException(status_code=404, detail="Log not found")
+        
+    is_today = log.date == date.today()
+    db.delete(log)
+    db.commit()
+    
+    if is_today:
+        from app.services.scoring_service import update_daily_score
+        update_daily_score(db, user["sub"])
+
 
 
 @router.get("")

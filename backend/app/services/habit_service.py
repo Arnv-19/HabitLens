@@ -25,13 +25,23 @@ ESSENTIAL_FALLBACK_TASKS = ["Morning", "Afternoon", "Evening", "Night"]
 
 def create_habit(db: Session, user_id: str, data: HabitCreate) -> Habit:
     """Create a new habit with category-specific behavior."""
-    is_fixed = data.category in ("productivity", "essential")
+    category_str = data.category.value if hasattr(data.category, 'value') else data.category
+    is_fixed = category_str in ("productivity", "essential")
+
+    # Override credit based on category
+    credit = 1
+    if category_str == "essential":
+        credit = 4
+    elif category_str in ("productivity", "recreation"):
+        credit = 2
+    elif category_str == "bonus":
+        credit = 1
 
     habit = Habit(
         user_id=user_id,
         title=data.title,
-        category=data.category,
-        credit=data.credit,
+        category=category_str,
+        credit=credit,
         is_fixed=is_fixed,
     )
     db.add(habit)
@@ -71,3 +81,33 @@ def delete_habit(db: Session, habit_id: str, user_id: str) -> bool:
     db.delete(habit)
     db.commit()
     return True
+
+
+def update_habit(db: Session, habit_id: str, user_id: str, data: dict) -> Habit:
+    """Update a habit."""
+    habit = db.query(Habit).filter(Habit.id == habit_id, Habit.user_id == user_id).first()
+    if not habit:
+        return None
+
+    if "title" in data and data["title"] is not None:
+        habit.title = data["title"]
+    if "category" in data and data["category"] is not None:
+        category_str = data["category"].value if hasattr(data["category"], 'value') else data["category"]
+        habit.category = category_str
+        habit.is_fixed = category_str in ("productivity", "essential")
+        
+        # Override credit when category changes, unless credit is also being explicitly updated
+        if "credit" not in data or data["credit"] is None:
+            if category_str == "essential":
+                habit.credit = 4
+            elif category_str in ("productivity", "recreation"):
+                habit.credit = 2
+            elif category_str == "bonus":
+                habit.credit = 1
+
+    if "credit" in data and data["credit"] is not None:
+        habit.credit = data["credit"]
+
+    db.commit()
+    db.refresh(habit)
+    return habit

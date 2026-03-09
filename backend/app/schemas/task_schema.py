@@ -8,6 +8,11 @@ class TaskCreate(BaseModel):
     time: Optional[str] = None  # HH:MM format or null
 
 
+class TaskUpdate(BaseModel):
+    task_name: Optional[str] = None
+    time: Optional[str] = None  # HH:MM format or null
+
+
 class TaskResponse(BaseModel):
     id: str
     habit_id: str

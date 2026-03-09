@@ -5,7 +5,7 @@ from datetime import time as py_time
 from app.database.database import get_db
 from app.database.models import HabitTask, Habit
 from app.core.security import get_current_user
-from app.schemas.task_schema import TaskCreate, TaskResponse
+from app.schemas.task_schema import TaskCreate, TaskResponse, TaskUpdate
 
 router = APIRouter(prefix="/tasks", tags=["Tasks"])
 
@@ -16,7 +16,7 @@ def create_task(
     db: Session = Depends(get_db),
     user: dict = Depends(get_current_user),
 ):
-    """Create a new task for a habit. Blocked for productivity and essential habits."""
+    """Create a new task for a habit. Blocked for essential habits."""
     habit = db.query(Habit).filter(Habit.id == data.habit_id, Habit.user_id == user["sub"]).first()
     if not habit:
         raise HTTPException(status_code=404, detail="Habit not found")
@@ -48,7 +48,7 @@ def delete_task(
     db: Session = Depends(get_db),
     user: dict = Depends(get_current_user),
 ):
-    """Delete a task. Blocked for productivity and essential habits."""
+    """Delete a task. Blocked for essential habits."""
     task = db.query(HabitTask).filter(HabitTask.id == task_id).first()
     if not task:
         raise HTTPException(status_code=404, detail="Task not found")
@@ -65,3 +65,54 @@ def delete_task(
 
     db.delete(task)
     db.commit()
+
+
+@router.get("", response_model=list[TaskResponse])
+def get_tasks(
+    habit_id: str,
+    db: Session = Depends(get_db),
+    user: dict = Depends(get_current_user),
+):
+    """Get all tasks for a particular habit."""
+    habit = db.query(Habit).filter(Habit.id == habit_id, Habit.user_id == user["sub"]).first()
+    if not habit:
+        raise HTTPException(status_code=404, detail="Habit not found or unauthorized")
+    
+    return habit.tasks
+
+
+@router.put("/{task_id}", response_model=TaskResponse)
+def update_task(
+    task_id: str,
+    data: TaskUpdate,
+    db: Session = Depends(get_db),
+    user: dict = Depends(get_current_user),
+):
+    """Update a task's name or time. Blocked for essential habits."""
+    task = db.query(HabitTask).filter(HabitTask.id == task_id).first()
+    if not task:
+        raise HTTPException(status_code=404, detail="Task not found")
+
+    habit = db.query(Habit).filter(Habit.id == task.habit_id, Habit.user_id == user["sub"]).first()
+    if not habit:
+        raise HTTPException(status_code=404, detail="Habit not found")
+
+    if habit.category == "essential":
+        raise HTTPException(
+            status_code=403,
+            detail="Cannot edit tasks from essential habits.",
+        )
+
+    if data.task_name is not None:
+        task.task_name = data.task_name
+
+    if data.time is not None:
+        try:
+            parts = data.time.split(":")
+            task.time = py_time(int(parts[0]), int(parts[1]))
+        except (ValueError, IndexError):
+            raise HTTPException(status_code=400, detail="Invalid time format. Use HH:MM")
+
+    db.commit()
+    db.refresh(task)
+    return task

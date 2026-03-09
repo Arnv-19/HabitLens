@@ -17,11 +17,11 @@ def parse_ics(file_content: bytes) -> List[Dict]:
             start_time = dtstart.dt if dtstart else None
             end_time = dtend.dt if dtend else None
 
-            # Convert date objects to datetime
+            # Convert date objects to datetime safely
             if start_time and not isinstance(start_time, datetime):
-                start_time = datetime.combine(start_time, datetime.min.time())
+                start_time = datetime(start_time.year, start_time.month, start_time.day)
             if end_time and not isinstance(end_time, datetime):
-                end_time = datetime.combine(end_time, datetime.min.time())
+                end_time = datetime(end_time.year, end_time.month, end_time.day)
 
             events.append({
                 "title": summary,

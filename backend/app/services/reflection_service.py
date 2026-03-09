@@ -4,8 +4,8 @@ from sqlalchemy.orm import Session
 from app.database.models import Habit, HabitLog, DailyScore
 
 
-def generate_reflection(db: Session, user_id: str) -> str:
-    """Generate a motivational daily reflection based on today's performance."""
+def generate_heuristic_reflection(db: Session, user_id: str) -> str:
+    """Generate a motivational daily reflection based on today's performance using heuristics."""
     today = date.today()
 
     daily = db.query(DailyScore).filter(

@@ -16,21 +16,36 @@ def compute_habit_score(credit: int, total_tasks: int, tasks_completed: int, eff
 
 def log_habit(db: Session, user_id: str, habit_id: str, tasks_completed: int, effort_percent: int) -> HabitLog:
     """Log a habit completion and update daily scores."""
-    habit = db.query(Habit).filter(Habit.id == habit_id).first()
+    habit = db.query(Habit).filter(Habit.id == habit_id, Habit.user_id == user_id).first()
     if not habit:
         raise ValueError("Habit not found")
 
     total_tasks = len(habit.tasks)
+    
+    # Clamp values to avoid > 100% effort/score explosions
+    if total_tasks > 0:
+        tasks_completed = min(tasks_completed, total_tasks)
+    effort_percent = min(effort_percent, 100)
+
     score = compute_habit_score(habit.credit, total_tasks, tasks_completed, effort_percent)
 
-    log = HabitLog(
-        habit_id=habit_id,
-        date=date.today(),
-        tasks_completed=tasks_completed,
-        effort_percent=effort_percent,
-        score=score,
-    )
-    db.add(log)
+    today = date.today()
+    log = db.query(HabitLog).filter(HabitLog.habit_id == habit_id, HabitLog.date == today).first()
+    
+    if log:
+        log.tasks_completed = tasks_completed
+        log.effort_percent = effort_percent
+        log.score = score
+    else:
+        log = HabitLog(
+            habit_id=habit_id,
+            date=today,
+            tasks_completed=tasks_completed,
+            effort_percent=effort_percent,
+            score=score,
+        )
+        db.add(log)
+        
     db.commit()
 
     # Update daily scores

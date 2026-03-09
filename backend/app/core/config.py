@@ -19,4 +19,7 @@ class Settings:
 
 settings = Settings()
 
+if os.getenv("ENVIRONMENT") == "production" and settings.JWT_SECRET == "supersecretkey":
+    raise ValueError("FATAL: JWT_SECRET must be explicitly set in production environment.")
+
 os.makedirs(settings.UPLOAD_DIR, exist_ok=True)

@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, datetime, time
 from sqlalchemy.orm import Session
 from app.database.models import HabitPhoto
 from app.utils.image_utils import create_collage
@@ -12,7 +12,7 @@ def get_today_photos(db: Session, user_id: str):
         db.query(HabitPhoto)
         .filter(
             HabitPhoto.user_id == user_id,
-            HabitPhoto.created_at >= today.isoformat(),
+            HabitPhoto.created_at >= datetime.combine(today, time.min),
         )
         .order_by(HabitPhoto.created_at.asc())
         .all()

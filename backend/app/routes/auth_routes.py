@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from google.oauth2 import id_token
 from google.auth.transport import requests as google_requests
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from app.database.database import get_db
 from app.database.models import User
@@ -53,7 +53,15 @@ def google_login(data: GoogleAuthRequest, db: Session = Depends(get_db)):
 
 
 class AvatarUpdate(BaseModel):
-    avatar_emoji: str
+    avatar_emoji: str = Field(..., max_length=10)
+
+@router.get("/me", response_model=UserResponse)
+def get_me(db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)):
+    """Get the current authenticated user's profile."""
+    user = db.query(User).filter(User.id == current_user["sub"]).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    return UserResponse.model_validate(user)
 
 @router.put("/me/avatar", response_model=UserResponse)
 def update_avatar(

@@ -1,14 +1,28 @@
+from enum import Enum
 from pydantic import BaseModel
 from typing import Optional, List
 from datetime import datetime, date
 
 
+class HabitCategory(str, Enum):
+    productivity = "productivity"
+    recreation = "recreation"
+    bonus = "bonus"
+    essential = "essential"
+
+
 class HabitCreate(BaseModel):
     title: str
-    category: str  # productivity, recreation, bonus, essential
+    category: HabitCategory
     credit: int = 1
     is_fixed: bool = False
     tasks: Optional[List[str]] = None  # task names to auto-create
+
+
+class HabitUpdate(BaseModel):
+    title: Optional[str] = None
+    category: Optional[HabitCategory] = None
+    credit: Optional[int] = None
 
 
 class HabitResponse(BaseModel):

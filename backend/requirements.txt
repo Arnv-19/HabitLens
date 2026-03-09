@@ -9,6 +9,5 @@ pillow
 icalendar
 google-auth
 python-jose
-passlib[bcrypt]
 email-validator
 requests
