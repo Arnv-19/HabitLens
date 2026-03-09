@@ -58,6 +58,7 @@ export function useHabits() {
             tasks_completed: tasksCompleted,
             effort_percent: effortPercent,
         });
+        await fetchHabits();
     };
 
     const createTask = async (habitId: string, taskName: string) => {

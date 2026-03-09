@@ -14,7 +14,7 @@ import { useRouter } from "next/navigation";
 export default function DashboardPage() {
     const { user, loading: authLoading } = useAuth();
     const router = useRouter();
-    const { habits, createHabit, deleteHabit, logHabit, createTask, deleteTask } = useHabits();
+    const { habits, fetchHabits, createHabit, deleteHabit, logHabit, createTask, deleteTask } = useHabits();
     const { dashboard, fetchDashboard } = useDashboard();
     const [modalOpen, setModalOpen] = useState(false);
     const [reflection, setReflection] = useState("");
@@ -155,6 +155,7 @@ export default function DashboardPage() {
                 habits={habits}
                 onLog={async (id, completed, effort) => {
                     await logHabit(id, completed, effort);
+                    await fetchHabits();
                     await fetchDashboard();
                 }}
                 onDelete={deleteHabit}

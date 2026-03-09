@@ -12,6 +12,7 @@ export default function SettingsPage() {
     const { user, updateUser, logout, loading } = useAuth();
     const router = useRouter();
     const [avatar, setAvatar] = useState(user?.avatar_emoji || "😊");
+    const [collageImage, setCollageImage] = useState<string | null>(null);
 
     useEffect(() => {
         if (!loading && !user) router.push("/");
@@ -33,6 +34,9 @@ export default function SettingsPage() {
     const handleGenerateCollage = async () => {
         try {
             const result = await api.generateCollage();
+            if (result.collage_image) {
+                setCollageImage(result.collage_image);
+            }
             alert(result.message);
         } catch (e: any) {
             alert("Failed: " + e.message);
@@ -87,8 +91,32 @@ export default function SettingsPage() {
                     }}
                 >
                     <span style={{ fontSize: 20 }}>📸</span>
-                    Generate Daily Collage & Email
+                    Generate Daily Collage
                 </motion.button>
+
+                {collageImage && (
+                    <motion.div
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        style={{
+                            marginTop: 12,
+                            padding: 16,
+                            borderRadius: 14,
+                            background: "#111",
+                            border: "1px solid #1a1a1a",
+                            textAlign: "center",
+                        }}
+                    >
+                        <h3 style={{ marginBottom: 12, fontSize: 14, fontWeight: 600, color: "#fff" }}>
+                            Today's Collage
+                        </h3>
+                        <img
+                            src={collageImage}
+                            alt="Daily Collage"
+                            style={{ width: "100%", borderRadius: 12, objectFit: "cover" }}
+                        />
+                    </motion.div>
+                )}
 
                 <motion.button
                     whileTap={{ scale: 0.97 }}
