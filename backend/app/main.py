@@ -27,8 +27,11 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "http://localhost:3000",
-        "https://habitlens.app",      # Add actual prod domain if known
-        "http://127.0.0.1:3000"
+        "http://127.0.0.1:3000",
+        "https://habitlens.app",
+        "https://habitlens.vercel.app",
+        "https://habit-lens.vercel.app",
+        "https://habitlens-frontend.onrender.com",
     ],
     allow_credentials=True,
     allow_methods=["*"],
