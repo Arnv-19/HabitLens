@@ -1,6 +1,9 @@
 "use client";
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import { api } from "./api";
+import { initMidnightCleanup } from "./midnight-cleanup";
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
 interface User {
     id: string;
@@ -21,9 +24,9 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType>({
     user: null,
     token: null,
-    login: async () => { },
-    logout: () => { },
-    updateUser: () => { },
+    login: async () => {},
+    logout: () => {},
+    updateUser: () => {},
     loading: true,
 });
 
@@ -40,6 +43,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             setUser(JSON.parse(storedUser));
         }
         setLoading(false);
+
+        // Initialize midnight cleanup scheduler
+        initMidnightCleanup(API_URL);
     }, []);
 
     const login = async (googleToken: string) => {

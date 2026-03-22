@@ -29,7 +29,7 @@ export default function HabitCard({
     habit: Habit;
     onLog: (habitId: string, completed: number, effort: number) => void;
     onDelete: (id: string) => void;
-    onUploadPhoto: (habitId: string, file: File) => void;
+    onUploadPhoto: (habitId: string, taskId: string | undefined, file: File) => Promise<void>;
     onCreateTask?: (habitId: string, taskName: string) => void;
     onDeleteTask?: (taskId: string) => void;
 }) {
@@ -42,9 +42,7 @@ export default function HabitCard({
             layout
             onClick={() => !expanded && setExpanded(true)}
             style={{
-                background: expanded
-                    ? `linear-gradient(145deg, ${color}10, #111)`
-                    : "#111",
+                background: expanded ? `linear-gradient(145deg, ${color}10, #111)` : "#111",
                 border: `1px solid ${expanded ? color + "40" : "#1a1a1a"}`,
                 borderRadius: 16,
                 cursor: expanded ? "default" : "pointer",
@@ -64,28 +62,14 @@ export default function HabitCard({
 
             {/* Collapsed tile */}
             <div style={{ padding: 16 }}>
-                <div style={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                }}>
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                     <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
                         <span style={{ fontSize: 24 }}>{icon}</span>
                         <div>
-                            <h3 style={{
-                                fontSize: 15,
-                                fontWeight: 600,
-                                color: "#fff",
-                                margin: 0,
-                            }}>
+                            <h3 style={{ fontSize: 15, fontWeight: 600, color: "#fff", margin: 0 }}>
                                 {habit.title}
                             </h3>
-                            <span style={{
-                                fontSize: 11,
-                                color: color,
-                                fontWeight: 500,
-                                textTransform: "capitalize",
-                            }}>
+                            <span style={{ fontSize: 11, color: color, fontWeight: 500, textTransform: "capitalize" }}>
                                 {habit.category} • {habit.credit}cr
                             </span>
                         </div>
@@ -98,7 +82,7 @@ export default function HabitCard({
                         color: color,
                         fontWeight: 600,
                     }}>
-                        {habit.tasks.length} tasks
+                        {habit.tasks.length > 0 ? `${habit.tasks.length} tasks` : "tap to log"}
                     </div>
                 </div>
             </div>

@@ -14,7 +14,7 @@ export default function HabitGrid({
     habits: Habit[];
     onLog: (habitId: string, completed: number, effort: number) => void;
     onDelete: (id: string) => void;
-    onUploadPhoto: (habitId: string, file: File) => void;
+    onUploadPhoto: (habitId: string, taskId: string | undefined, file: File) => Promise<void>;
     onCreateTask?: (habitId: string, taskName: string) => void;
     onDeleteTask?: (taskId: string) => void;
 }) {
@@ -23,16 +23,10 @@ export default function HabitGrid({
             <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                style={{
-                    textAlign: "center",
-                    padding: "60px 20px",
-                    color: "#555",
-                }}
+                style={{ textAlign: "center", padding: "60px 20px", color: "#555" }}
             >
                 <div style={{ fontSize: 48, marginBottom: 16 }}>🌱</div>
-                <p style={{ fontSize: 16, fontWeight: 500, color: "#888" }}>
-                    No habits yet
-                </p>
+                <p style={{ fontSize: 16, fontWeight: 500, color: "#888" }}>No habits yet</p>
                 <p style={{ fontSize: 13, marginTop: 8, color: "#555" }}>
                     Tap the + button to create your first habit
                 </p>

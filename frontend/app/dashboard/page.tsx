@@ -24,15 +24,25 @@ export default function DashboardPage() {
     }, [user, authLoading, router]);
 
     useEffect(() => {
-        api.getReflection().then((r) => setReflection(r.reflection)).catch(() => { });
+        api.getReflection().then((r) => setReflection(r.reflection)).catch(() => {});
     }, []);
 
-    const handleUploadPhoto = async (habitId: string, file: File) => {
+    // Upload photo: habitId, optional taskId, file
+    const handleUploadPhoto = async (habitId: string, taskId: string | undefined, file: File) => {
         try {
-            await api.uploadPhoto(habitId, file);
+            await api.uploadPhoto(habitId, file, taskId);
         } catch (e) {
             console.error("Photo upload failed:", e);
+            throw e; // re-throw so the card can show error state
         }
+    };
+
+    const handleLog = async (habitId: string, completed: number, effort: number) => {
+        await logHabit(habitId, completed, effort);
+        // Refresh both habits and dashboard stats
+        await Promise.all([fetchHabits(), fetchDashboard()]);
+        // Refresh reflection too
+        api.getReflection().then((r) => setReflection(r.reflection)).catch(() => {});
     };
 
     if (authLoading || !user) return null;
@@ -112,7 +122,7 @@ export default function DashboardPage() {
                 >
                     <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
                         <span style={{ fontSize: 16 }}>🤖</span>
-                        <span style={{ fontSize: 12, color: "#667eea", fontWeight: 600 }}>AI Reflection</span>
+                        <span style={{ fontSize: 12, color: "#667eea", fontWeight: 600 }}>Daily Reflection</span>
                     </div>
                     <p style={{ fontSize: 14, color: "#bbb", lineHeight: 1.6, fontStyle: "italic" }}>
                         "{reflection}"
@@ -153,11 +163,7 @@ export default function DashboardPage() {
             {/* Habit Grid */}
             <HabitGrid
                 habits={habits}
-                onLog={async (id, completed, effort) => {
-                    await logHabit(id, completed, effort);
-                    await fetchHabits();
-                    await fetchDashboard();
-                }}
+                onLog={handleLog}
                 onDelete={deleteHabit}
                 onUploadPhoto={handleUploadPhoto}
                 onCreateTask={createTask}
@@ -168,7 +174,10 @@ export default function DashboardPage() {
             <HabitCreateModal
                 open={modalOpen}
                 onClose={() => setModalOpen(false)}
-                onCreate={createHabit}
+                onCreate={async (data) => {
+                    await createHabit(data);
+                    await fetchDashboard();
+                }}
             />
 
             <CatWidget />

@@ -1,7 +1,7 @@
 import uuid
-from fastapi import APIRouter, Depends, UploadFile, File
+from fastapi import APIRouter, Depends, UploadFile, File, BackgroundTasks
 from sqlalchemy.orm import Session
-from datetime import datetime
+from datetime import datetime, date, time
 
 from app.database.database import get_db
 from app.database.models import HabitPhoto, User
@@ -11,10 +11,27 @@ from app.services.email_service import send_daily_summary
 from app.services.reflection_service import generate_heuristic_reflection
 from app.utils.image_utils import process_upload
 from app.database.models import DailyScore
-from datetime import date
 from pydantic import BaseModel
 
 router = APIRouter(prefix="/collage", tags=["Collage"])
+
+
+def _cleanup_old_photos(db: Session, user_id: str):
+    """Delete all photos from previous days for this user (keeps today's only)."""
+    today = date.today()
+    today_start = datetime.combine(today, time.min)
+    old_photos = (
+        db.query(HabitPhoto)
+        .filter(
+            HabitPhoto.user_id == user_id,
+            HabitPhoto.created_at < today_start,
+        )
+        .all()
+    )
+    for photo in old_photos:
+        db.delete(photo)
+    if old_photos:
+        db.commit()
 
 
 @router.post("/upload-photo")
@@ -22,16 +39,23 @@ async def upload_photo(
     habit_id: str,
     task_id: str = None,
     file: UploadFile = File(...),
+    background_tasks: BackgroundTasks = None,
     db: Session = Depends(get_db),
     user: dict = Depends(get_current_user),
 ):
-    """Upload a photo for a habit task."""
+    """Upload a photo for a habit task. Old photos (previous days) are cleaned up."""
     content = await file.read()
     try:
         b64_image = process_upload(content, file.content_type)
     except ValueError as e:
         from fastapi import HTTPException
         raise HTTPException(status_code=400, detail=str(e))
+
+    # Clean up yesterday's photos in background
+    if background_tasks:
+        background_tasks.add_task(_cleanup_old_photos, db, user["sub"])
+    else:
+        _cleanup_old_photos(db, user["sub"])
 
     photo = HabitPhoto(
         user_id=user["sub"],
@@ -57,16 +81,14 @@ def generate_daily_collage(
     collage_b64 = generate_collage(db, user_id)
 
     if not collage_b64:
-        return {"message": "No photos to create collage today."}
+        return {"message": "No photos uploaded today yet."}
 
-    # Get reflection and effort
     reflection = generate_heuristic_reflection(db, user_id)
     daily = db.query(DailyScore).filter(
         DailyScore.user_id == user_id, DailyScore.date == date.today()
     ).first()
     effort = daily.effort_index if daily else 0.0
 
-    # Send email
     if send_email:
         db_user = db.query(User).filter(User.id == user_id).first()
         if db_user and db_user.email:
@@ -105,10 +127,24 @@ def delete_photo(
     user: dict = Depends(get_current_user),
 ):
     """Delete a specific photo."""
-    photo = db.query(HabitPhoto).filter(HabitPhoto.id == photo_id, HabitPhoto.user_id == user["sub"]).first()
+    photo = (
+        db.query(HabitPhoto)
+        .filter(HabitPhoto.id == photo_id, HabitPhoto.user_id == user["sub"])
+        .first()
+    )
     if not photo:
         from fastapi import HTTPException
         raise HTTPException(status_code=404, detail="Photo not found")
-    
+
     db.delete(photo)
     db.commit()
+
+
+@router.delete("/cleanup", status_code=200)
+def cleanup_old_photos(
+    db: Session = Depends(get_db),
+    user: dict = Depends(get_current_user),
+):
+    """Manually trigger cleanup of old photos (previous days). Called at midnight."""
+    _cleanup_old_photos(db, user["sub"])
+    return {"message": "Old photos cleaned up successfully"}

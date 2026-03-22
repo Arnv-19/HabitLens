@@ -6,12 +6,16 @@ from app.database.models import HabitLog, Habit, DailyScore
 def compute_habit_score(credit: int, total_tasks: int, tasks_completed: int, effort_percent: int) -> float:
     """
     HabitScore = C × (t / T) × (E / 100)
+    If a habit has no tasks (total_tasks == 0), treat completion as binary (1/1).
     """
     if total_tasks == 0:
-        return 0.0
-    task_completion = tasks_completed / total_tasks
+        # No tasks: if tasks_completed >= 1 means user marked it done
+        task_ratio = 1.0 if tasks_completed >= 1 else 0.0
+    else:
+        task_ratio = tasks_completed / total_tasks
+
     effort_modifier = effort_percent / 100.0
-    return credit * task_completion * effort_modifier
+    return credit * task_ratio * effort_modifier
 
 
 def log_habit(db: Session, user_id: str, habit_id: str, tasks_completed: int, effort_percent: int) -> HabitLog:
@@ -21,17 +25,22 @@ def log_habit(db: Session, user_id: str, habit_id: str, tasks_completed: int, ef
         raise ValueError("Habit not found")
 
     total_tasks = len(habit.tasks)
-    
-    # Clamp values to avoid > 100% effort/score explosions
+
+    # Clamp values
     if total_tasks > 0:
         tasks_completed = min(tasks_completed, total_tasks)
-    effort_percent = min(effort_percent, 100)
+    else:
+        # For habits with no tasks, 0 or 1 is valid
+        tasks_completed = min(tasks_completed, 1)
+
+    effort_percent = min(max(effort_percent, 0), 100)
 
     score = compute_habit_score(habit.credit, total_tasks, tasks_completed, effort_percent)
 
     today = date.today()
+    # Upsert: update existing log for today if it exists
     log = db.query(HabitLog).filter(HabitLog.habit_id == habit_id, HabitLog.date == today).first()
-    
+
     if log:
         log.tasks_completed = tasks_completed
         log.effort_percent = effort_percent
@@ -45,7 +54,7 @@ def log_habit(db: Session, user_id: str, habit_id: str, tasks_completed: int, ef
             score=score,
         )
         db.add(log)
-        
+
     db.commit()
 
     # Update daily scores
@@ -59,7 +68,6 @@ def update_daily_score(db: Session, user_id: str):
     """Recalculate today's daily score for the user."""
     today = date.today()
 
-    # Get all habits for user
     habits = db.query(Habit).filter(Habit.user_id == user_id).all()
 
     total_score = 0.0
@@ -67,7 +75,6 @@ def update_daily_score(db: Session, user_id: str):
 
     for habit in habits:
         max_score += habit.credit
-        # Get today's log for this habit
         log = (
             db.query(HabitLog)
             .filter(HabitLog.habit_id == habit.id, HabitLog.date == today)
@@ -79,7 +86,6 @@ def update_daily_score(db: Session, user_id: str):
 
     effort_index = (total_score / max_score * 100) if max_score > 0 else 0.0
 
-    # Upsert daily score
     daily = db.query(DailyScore).filter(
         DailyScore.user_id == user_id, DailyScore.date == today
     ).first()
