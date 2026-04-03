@@ -352,6 +352,6 @@ Key endpoints:
 ---
 
 ## 👨‍💻 Contributors
-@Kaivalya Vaidya
+@Arnav Gupta & @Kaivalya Vaidya
 
 Built with ❤️ for better habits.
