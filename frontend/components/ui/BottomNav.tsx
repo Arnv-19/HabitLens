@@ -4,10 +4,10 @@ import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
 
 const tabs = [
-    { href: "/dashboard", label: "Dashboard", icon: "📊" },
-    { href: "/calendar", label: "Calendar", icon: "📅" },
-    { href: "/stats", label: "Stats", icon: "📈" },
-    { href: "/settings", label: "Settings", icon: "⚙️" },
+    { href: "/dashboard", label: "Home", icon: "⊞" },
+    { href: "/calendar", label: "Calendar", icon: "◫" },
+    { href: "/stats", label: "Stats", icon: "◈" },
+    { href: "/settings", label: "Settings", icon: "◎" },
 ];
 
 export default function BottomNav() {
@@ -19,46 +19,59 @@ export default function BottomNav() {
                 display: "flex",
                 justifyContent: "space-around",
                 alignItems: "center",
-                maxWidth: 480,
+                maxWidth: 520,
                 margin: "0 auto",
+                padding: "0 8px",
             }}>
                 {tabs.map((tab) => {
                     const active = pathname === tab.href;
                     return (
-                        <Link key={tab.href} href={tab.href} style={{ textDecoration: "none" }}>
+                        <Link key={tab.href} href={tab.href} style={{ textDecoration: "none", flex: 1 }}>
                             <motion.div
-                                whileTap={{ scale: 0.9 }}
+                                whileTap={{ scale: 0.88 }}
                                 style={{
                                     display: "flex",
                                     flexDirection: "column",
                                     alignItems: "center",
-                                    gap: 2,
-                                    padding: "6px 16px",
-                                    borderRadius: 12,
+                                    gap: 3,
+                                    padding: "8px 12px",
+                                    borderRadius: 10,
                                     position: "relative",
                                 }}
                             >
-                                {active && (
-                                    <motion.div
-                                        layoutId="activeTab"
-                                        style={{
-                                            position: "absolute",
-                                            inset: 0,
-                                            background: "rgba(102, 126, 234, 0.12)",
-                                            borderRadius: 12,
-                                        }}
-                                        transition={{ type: "spring", stiffness: 400, damping: 30 }}
-                                    />
-                                )}
-                                <span style={{ fontSize: 22 }}>{tab.icon}</span>
+                                <span style={{
+                                    fontSize: 18,
+                                    lineHeight: 1,
+                                    color: active ? "#6366f1" : "#3a3a3a",
+                                    transition: "color 0.2s",
+                                }}>
+                                    {tab.icon}
+                                </span>
                                 <span style={{
                                     fontSize: 10,
                                     fontWeight: active ? 600 : 400,
-                                    color: active ? "#fff" : "#666",
-                                    letterSpacing: "0.5px",
+                                    color: active ? "#6366f1" : "#3a3a3a",
+                                    letterSpacing: "0.2px",
+                                    transition: "color 0.2s",
                                 }}>
                                     {tab.label}
                                 </span>
+                                {active && (
+                                    <motion.div
+                                        layoutId="navDot"
+                                        style={{
+                                            position: "absolute",
+                                            bottom: 0,
+                                            left: "50%",
+                                            transform: "translateX(-50%)",
+                                            width: 4,
+                                            height: 4,
+                                            borderRadius: "50%",
+                                            background: "#6366f1",
+                                        }}
+                                        transition={{ type: "spring", stiffness: 500, damping: 35 }}
+                                    />
+                                )}
                             </motion.div>
                         </Link>
                     );

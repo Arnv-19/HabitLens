@@ -23,34 +23,36 @@ export default function HabitGrid({
             <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                style={{ textAlign: "center", padding: "60px 20px", color: "#555" }}
+                style={{
+                    textAlign: "center",
+                    padding: "48px 20px",
+                    color: "#3a3a3a",
+                }}
             >
-                <div style={{ fontSize: 48, marginBottom: 16 }}>🌱</div>
-                <p style={{ fontSize: 16, fontWeight: 500, color: "#888" }}>No habits yet</p>
-                <p style={{ fontSize: 13, marginTop: 8, color: "#555" }}>
-                    Tap the + button to create your first habit
+                <div style={{ fontSize: 36, marginBottom: 12, opacity: 0.5 }}>○</div>
+                <p style={{ fontSize: 15, color: "#444", marginBottom: 6 }}>No habits yet</p>
+                <p style={{ fontSize: 13, color: "#333" }}>
+                    Hit + to add your first one
                 </p>
             </motion.div>
         );
     }
 
     const sortedHabits = [...habits].sort((a, b) => {
-        if (a.is_fixed !== b.is_fixed) return a.is_fixed ? -1 : 1;
-        return a.category.localeCompare(b.category);
+        const order = { essential: 0, productivity: 1, recreation: 2, bonus: 3 };
+        const ao = order[a.category as keyof typeof order] ?? 4;
+        const bo = order[b.category as keyof typeof order] ?? 4;
+        return ao - bo;
     });
 
     return (
-        <div style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fill, minmax(160px, 1fr))",
-            gap: 12,
-        }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
             {sortedHabits.map((habit, i) => (
                 <motion.div
                     key={habit.id}
-                    initial={{ opacity: 0, y: 20 }}
+                    initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: i * 0.05, duration: 0.3 }}
+                    transition={{ delay: i * 0.04, duration: 0.25 }}
                 >
                     <HabitCard
                         habit={habit}

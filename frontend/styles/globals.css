@@ -1,21 +1,22 @@
 @import "tailwindcss";
 
-/* ===== AMOLED Dark Theme ===== */
 :root {
   --bg-primary: #000000;
-  --bg-card: #111111;
-  --bg-card-hover: #1a1a1a;
-  --bg-elevated: #0a0a0a;
-  --text-primary: #ffffff;
-  --text-secondary: #a0a0a0;
-  --text-muted: #666666;
-  --border-subtle: #222222;
-  --accent-red: #ff4757;
-  --accent-green: #2ed573;
-  --accent-yellow: #ffa502;
-  --accent-blue: #3742fa;
-  --gradient-start: #667eea;
-  --gradient-end: #764ba2;
+  --bg-card: #0f0f0f;
+  --bg-card-hover: #161616;
+  --bg-elevated: #080808;
+  --text-primary: #f0f0f0;
+  --text-secondary: #888;
+  --text-muted: #555;
+  --border-subtle: #1e1e1e;
+  --accent-red: #ff4444;
+  --accent-green: #22c55e;
+  --accent-yellow: #f59e0b;
+  --accent-blue: #3b82f6;
+  --accent-purple: #8b5cf6;
+  --gradient-start: #6366f1;
+  --gradient-end: #8b5cf6;
+  --max-width: 520px;
 }
 
 * {
@@ -35,65 +36,60 @@ body {
   min-height: 100vh;
 }
 
+/* Center all pages */
+#__next,
+main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+}
+
+/* Page wrapper - centered with max-width */
+.page-wrapper {
+  width: 100%;
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 20px 16px 100px;
+}
+
 /* ===== Scrollbar ===== */
 ::-webkit-scrollbar {
-  width: 6px;
+  width: 4px;
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--bg-primary);
+  background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #333;
-  border-radius: 3px;
+  background: #2a2a2a;
+  border-radius: 2px;
 }
 
-::-webkit-scrollbar-thumb:hover {
-  background: #555;
-}
-
-/* ===== Smooth page transitions ===== */
+/* ===== Page transition ===== */
 .page-transition {
-  animation: fadeSlideIn 0.4s ease-out;
+  width: 100%;
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 20px 16px 100px;
+  animation: fadeIn 0.3s ease;
 }
 
-@keyframes fadeSlideIn {
-  from {
-    opacity: 0;
-    transform: translateY(12px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
-/* ===== Glass card ===== */
+/* ===== Cards ===== */
 .glass-card {
-  background: rgba(17, 17, 17, 0.8);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 16px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: 14px;
 }
 
-/* ===== Habit Category Colors ===== */
-.category-productivity {
-  --cat-color: var(--accent-red);
-}
-
-.category-recreation {
-  --cat-color: var(--accent-green);
-}
-
-.category-bonus {
-  --cat-color: var(--accent-yellow);
-}
-
-.category-essential {
-  --cat-color: var(--accent-blue);
+.glass-card:hover {
+  border-color: #2a2a2a;
 }
 
 /* ===== Bottom Nav ===== */
@@ -103,56 +99,55 @@ body {
   left: 0;
   right: 0;
   z-index: 100;
-  background: rgba(0, 0, 0, 0.92);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
-  padding: 8px 0 max(8px, env(safe-area-inset-bottom));
+  background: rgba(0, 0, 0, 0.95);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-top: 1px solid #111;
+  padding: 6px 0 max(8px, env(safe-area-inset-bottom));
 }
 
-/* ===== Effort Slider ===== */
+/* ===== Range input ===== */
 input[type="range"] {
   -webkit-appearance: none;
   appearance: none;
   width: 100%;
-  height: 6px;
-  background: #222;
-  border-radius: 3px;
+  height: 4px;
+  background: #1e1e1e;
+  border-radius: 2px;
   outline: none;
 }
 
 input[type="range"]::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
-  width: 20px;
-  height: 20px;
+  width: 18px;
+  height: 18px;
   border-radius: 50%;
-  background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+  background: #fff;
   cursor: pointer;
-  box-shadow: 0 0 10px rgba(102, 126, 234, 0.4);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.5);
+  border: 2px solid #1e1e1e;
 }
 
-/* ===== Pulse Glow animation ===== */
+/* ===== Pulse ===== */
 @keyframes pulseGlow {
-
-  0%,
-  100% {
-    box-shadow: 0 0 8px rgba(102, 126, 234, 0.3);
-  }
-
-  50% {
-    box-shadow: 0 0 20px rgba(102, 126, 234, 0.6);
-  }
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
 }
 
 .pulse-glow {
   animation: pulseGlow 2s ease-in-out infinite;
 }
 
-/* ===== 3D Card Flip ===== */
+/* ===== Spin ===== */
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ===== Flip card ===== */
 .flip-card-inner {
   transform-style: preserve-3d;
-  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .flip-card-inner.flipped {
@@ -169,42 +164,39 @@ input[type="range"]::-webkit-slider-thumb {
   transform: rotateY(180deg);
 }
 
-/* ===== React Calendar Overrides ===== */
+/* ===== React Calendar ===== */
 .react-calendar {
-  background: var(--bg-card) !important;
-  border: 1px solid rgba(255, 255, 255, 0.05) !important;
-  border-radius: 16px !important;
+  background: transparent !important;
+  border: none !important;
   font-family: inherit !important;
   width: 100% !important;
   color: var(--text-primary) !important;
-  padding: 16px !important;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4) !important;
 }
 
 .react-calendar__navigation {
-  margin-bottom: 16px !important;
+  margin-bottom: 12px !important;
 }
 
 .react-calendar__navigation button {
   color: var(--text-primary) !important;
-  font-size: 1.1rem !important;
-  font-weight: 700 !important;
+  font-size: 15px !important;
+  font-weight: 600 !important;
   border-radius: 8px !important;
-  min-width: 44px !important;
+  min-width: 40px !important;
   background: transparent !important;
   border: none !important;
 }
 
 .react-calendar__navigation button:hover {
-  background: var(--bg-card-hover) !important;
+  background: #1a1a1a !important;
 }
 
 .react-calendar__month-view__weekdays {
   color: var(--text-muted) !important;
   text-transform: uppercase !important;
-  font-size: 0.75rem !important;
-  font-weight: 700 !important;
-  padding-bottom: 8px !important;
+  font-size: 11px !important;
+  font-weight: 600 !important;
+  padding-bottom: 6px !important;
 }
 
 .react-calendar__month-view__weekdays abbr {
@@ -217,46 +209,44 @@ input[type="range"]::-webkit-slider-thumb {
 }
 
 .react-calendar__month-view__days__day--weekend {
-  color: var(--accent-red) !important;
+  color: #ff6b6b !important;
 }
 
 .react-calendar__month-view__days__day--neighboringMonth {
   color: var(--text-muted) !important;
+  opacity: 0.4;
 }
 
 .react-calendar__tile {
   background: transparent !important;
-  border-radius: 12px !important;
-  padding: 12px 6px !important;
-  margin: 2px 0 !important;
+  border-radius: 8px !important;
+  padding: 10px 4px !important;
   border: 1px solid transparent !important;
   outline: none !important;
-  /* Removes blue focus ring */
-  transition: all 0.2s ease !important;
+  transition: all 0.15s ease !important;
+  font-size: 13px !important;
 }
 
 .react-calendar__tile:hover {
-  background: rgba(255, 255, 255, 0.05) !important;
-  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  background: #1a1a1a !important;
 }
 
 .react-calendar__tile--now {
-  background: rgba(102, 126, 234, 0.1) !important;
-  border: 1px solid var(--gradient-start) !important;
-  color: var(--gradient-start) !important;
-  font-weight: bold !important;
+  background: rgba(99, 102, 241, 0.12) !important;
+  border: 1px solid rgba(99, 102, 241, 0.4) !important;
+  color: #818cf8 !important;
+  font-weight: 600 !important;
 }
 
 .react-calendar__tile--active {
-  background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end)) !important;
+  background: #6366f1 !important;
   color: #fff !important;
   border: none !important;
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4) !important;
-  font-weight: bold !important;
+  font-weight: 600 !important;
 }
 
 .react-calendar__tile--active:hover {
-  background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end)) !important;
+  background: #5558e3 !important;
 }
 
 abbr[title] {

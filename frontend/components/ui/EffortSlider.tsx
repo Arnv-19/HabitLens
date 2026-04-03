@@ -1,6 +1,5 @@
 "use client";
-import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 
 export default function EffortSlider({
     value,
@@ -10,26 +9,26 @@ export default function EffortSlider({
     onChange: (v: number) => void;
 }) {
     const getColor = () => {
-        if (value >= 80) return "#2ed573";
-        if (value >= 50) return "#ffa502";
-        return "#ff4757";
+        if (value >= 80) return "#22c55e";
+        if (value >= 50) return "#f59e0b";
+        return "#ef4444";
     };
 
     return (
-        <div style={{ width: "100%", padding: "8px 0" }}>
+        <div style={{ width: "100%" }}>
             <div style={{
                 display: "flex",
                 justifyContent: "space-between",
+                alignItems: "center",
                 marginBottom: 8,
                 fontSize: 12,
-                color: "#888",
             }}>
-                <span>Effort</span>
+                <span style={{ color: "#555" }}>effort</span>
                 <motion.span
                     key={value}
-                    initial={{ scale: 1.3, color: getColor() }}
-                    animate={{ scale: 1, color: getColor() }}
-                    style={{ fontWeight: 700, fontSize: 14 }}
+                    initial={{ scale: 1.15 }}
+                    animate={{ scale: 1 }}
+                    style={{ color: getColor(), fontWeight: 600, fontSize: 13 }}
                 >
                     {value}%
                 </motion.span>
@@ -39,13 +38,14 @@ export default function EffortSlider({
                     position: "absolute",
                     top: "50%",
                     left: 0,
-                    height: 6,
+                    height: 4,
                     width: `${value}%`,
-                    background: `linear-gradient(90deg, ${getColor()}88, ${getColor()})`,
-                    borderRadius: 3,
+                    background: getColor(),
+                    borderRadius: 2,
                     transform: "translateY(-50%)",
-                    transition: "width 0.1s",
+                    transition: "width 0.05s, background 0.2s",
                     pointerEvents: "none",
+                    opacity: 0.7,
                 }} />
                 <input
                     type="range"

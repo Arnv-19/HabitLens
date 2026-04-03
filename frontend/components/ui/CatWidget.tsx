@@ -9,13 +9,14 @@ export default function CatWidget() {
     const [loading, setLoading] = useState(false);
 
     const fetchQuote = async () => {
+        if (show) { setShow(false); return; }
         setLoading(true);
         try {
             const q = await api.getQuote();
             setQuote(q);
             setShow(true);
         } catch {
-            setQuote({ quote: "Keep going, you're doing amazing!", author: "HabitLens" });
+            setQuote({ quote: "Keep going.", author: "HabitLens" });
             setShow(true);
         }
         setLoading(false);
@@ -23,84 +24,57 @@ export default function CatWidget() {
 
     return (
         <>
-            {/* Floating Cat Button */}
             <motion.button
-                whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
-                animate={{ y: [0, -6, 0] }}
-                transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
                 onClick={fetchQuote}
                 style={{
                     position: "fixed",
-                    bottom: 80,
-                    right: 20,
-                    width: 56,
-                    height: 56,
+                    bottom: 76,
+                    right: 16,
+                    width: 44,
+                    height: 44,
                     borderRadius: "50%",
-                    background: "linear-gradient(135deg, #667eea, #764ba2)",
-                    border: "none",
+                    background: "#111",
+                    border: "1px solid #222",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
-                    fontSize: 28,
+                    fontSize: 20,
                     cursor: "pointer",
-                    boxShadow: "0 8px 32px rgba(102,126,234,0.4)",
                     zIndex: 90,
+                    color: "#555",
                 }}
             >
-                {loading ? "⏳" : "🐱"}
+                {loading ? "·" : "🐱"}
             </motion.button>
 
-            {/* Quote Popup */}
             <AnimatePresence>
                 {show && quote && (
                     <motion.div
-                        initial={{ opacity: 0, y: 20, scale: 0.9 }}
+                        initial={{ opacity: 0, y: 8, scale: 0.95 }}
                         animate={{ opacity: 1, y: 0, scale: 1 }}
-                        exit={{ opacity: 0, y: 20, scale: 0.9 }}
+                        exit={{ opacity: 0, y: 8, scale: 0.95 }}
+                        transition={{ duration: 0.15 }}
                         onClick={() => setShow(false)}
                         style={{
                             position: "fixed",
-                            bottom: 146,
-                            right: 20,
-                            maxWidth: 300,
+                            bottom: 128,
+                            right: 16,
+                            maxWidth: 260,
                             background: "#111",
-                            border: "1px solid #222",
-                            borderRadius: 16,
-                            padding: 20,
+                            border: "1px solid #1e1e1e",
+                            borderRadius: 12,
+                            padding: "14px 16px",
                             zIndex: 91,
-                            boxShadow: "0 20px 60px rgba(0,0,0,0.8)",
                             cursor: "pointer",
                         }}
                     >
-                        <p style={{
-                            fontSize: 15,
-                            lineHeight: 1.6,
-                            fontStyle: "italic",
-                            color: "#ddd",
-                            marginBottom: 8,
-                        }}>
+                        <p style={{ fontSize: 13, color: "#888", lineHeight: 1.5, marginBottom: 6 }}>
                             "{quote.quote}"
                         </p>
-                        <p style={{
-                            fontSize: 12,
-                            color: "#667eea",
-                            fontWeight: 600,
-                        }}>
+                        <p style={{ fontSize: 11, color: "#444" }}>
                             — {quote.author}
                         </p>
-                        <div style={{
-                            position: "absolute",
-                            bottom: -8,
-                            right: 28,
-                            width: 16,
-                            height: 16,
-                            background: "#111",
-                            border: "1px solid #222",
-                            borderTop: "none",
-                            borderLeft: "none",
-                            transform: "rotate(45deg)",
-                        }} />
                     </motion.div>
                 )}
             </AnimatePresence>

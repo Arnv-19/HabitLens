@@ -5,17 +5,17 @@ import { Habit } from "@/hooks/useHabits";
 import HabitFlipCard from "./HabitFlipCard";
 
 const CATEGORY_COLORS: Record<string, string> = {
-    productivity: "#ff4757",
-    recreation: "#2ed573",
-    bonus: "#ffa502",
-    essential: "#3742fa",
+    productivity: "#ef4444",
+    recreation: "#22c55e",
+    bonus: "#f59e0b",
+    essential: "#3b82f6",
 };
 
-const CATEGORY_ICONS: Record<string, string> = {
+const CATEGORY_DOTS: Record<string, string> = {
     productivity: "🎯",
     recreation: "🌿",
     bonus: "⭐",
-    essential: "💎",
+    essential: "💧",
 };
 
 export default function HabitCard({
@@ -34,67 +34,74 @@ export default function HabitCard({
     onDeleteTask?: (taskId: string) => void;
 }) {
     const [expanded, setExpanded] = useState(false);
-    const color = CATEGORY_COLORS[habit.category] || "#667eea";
-    const icon = CATEGORY_ICONS[habit.category] || "📌";
+    const color = CATEGORY_COLORS[habit.category] || "#6366f1";
+    const dot = CATEGORY_DOTS[habit.category] || "●";
 
     return (
         <motion.div
             layout
             onClick={() => !expanded && setExpanded(true)}
             style={{
-                background: expanded ? `linear-gradient(145deg, ${color}10, #111)` : "#111",
-                border: `1px solid ${expanded ? color + "40" : "#1a1a1a"}`,
-                borderRadius: 16,
+                background: "#0f0f0f",
+                border: `1px solid ${expanded ? color + "30" : "#1a1a1a"}`,
+                borderRadius: 12,
                 cursor: expanded ? "default" : "pointer",
                 overflow: "hidden",
-                position: "relative",
+                transition: "border-color 0.2s",
             }}
-            whileHover={!expanded ? { scale: 1.03, borderColor: color + "60" } : {}}
-            whileTap={!expanded ? { scale: 0.97 } : {}}
-            transition={{ type: "spring", stiffness: 300, damping: 25 }}
+            whileHover={!expanded ? { borderColor: color + "40" } : {}}
+            whileTap={!expanded ? { scale: 0.98 } : {}}
+            transition={{ type: "spring", stiffness: 400, damping: 28 }}
         >
-            {/* Top color accent bar */}
+            {/* Color strip */}
             <div style={{
-                height: 3,
-                background: `linear-gradient(90deg, ${color}, ${color}88)`,
-                borderRadius: "16px 16px 0 0",
+                height: 2,
+                background: color,
+                opacity: expanded ? 1 : 0.5,
+                transition: "opacity 0.2s",
             }} />
 
-            {/* Collapsed tile */}
-            <div style={{ padding: 16 }}>
+            <div style={{ padding: "12px 14px" }}>
                 <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                    <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                        <span style={{ fontSize: 24 }}>{icon}</span>
-                        <div>
-                            <h3 style={{ fontSize: 15, fontWeight: 600, color: "#fff", margin: 0 }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 8, minWidth: 0 }}>
+                        <span style={{ fontSize: 16, flexShrink: 0 }}>{dot}</span>
+                        <div style={{ minWidth: 0 }}>
+                            <p style={{
+                                fontSize: 14,
+                                fontWeight: 500,
+                                color: "#e0e0e0",
+                                margin: 0,
+                                overflow: "hidden",
+                                textOverflow: "ellipsis",
+                                whiteSpace: "nowrap",
+                            }}>
                                 {habit.title}
-                            </h3>
-                            <span style={{ fontSize: 11, color: color, fontWeight: 500, textTransform: "capitalize" }}>
-                                {habit.category} • {habit.credit}cr
-                            </span>
+                            </p>
+                            <p style={{ fontSize: 11, color: "#444", marginTop: 1 }}>
+                                {habit.category} · {habit.credit}pt
+                            </p>
                         </div>
                     </div>
-                    <div style={{
-                        background: color + "20",
-                        borderRadius: 8,
-                        padding: "4px 10px",
-                        fontSize: 12,
-                        color: color,
-                        fontWeight: 600,
-                    }}>
-                        {habit.tasks.length > 0 ? `${habit.tasks.length} tasks` : "tap to log"}
-                    </div>
+                    {habit.tasks.length > 0 && (
+                        <span style={{
+                            fontSize: 11,
+                            color: "#444",
+                            flexShrink: 0,
+                            marginLeft: 8,
+                        }}>
+                            {habit.tasks.length} tasks
+                        </span>
+                    )}
                 </div>
             </div>
 
-            {/* Expanded content */}
             <AnimatePresence>
                 {expanded && (
                     <motion.div
                         initial={{ height: 0, opacity: 0 }}
                         animate={{ height: "auto", opacity: 1 }}
                         exit={{ height: 0, opacity: 0 }}
-                        transition={{ type: "spring", stiffness: 200, damping: 25 }}
+                        transition={{ type: "spring", stiffness: 280, damping: 26 }}
                     >
                         <HabitFlipCard
                             habit={habit}
