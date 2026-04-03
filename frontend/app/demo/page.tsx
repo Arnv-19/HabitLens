@@ -173,7 +173,7 @@ export default function DemoPage() {
                 habits={habits}
                 onLog={handleLog}
                 onDelete={handleDelete}
-                onUploadPhoto={() => { }}
+                onUploadPhoto={async (habitId, taskId, file) => { }}
             />
 
             <HabitCreateModal open={modalOpen} onClose={() => setModalOpen(false)} onCreate={handleCreate} />
