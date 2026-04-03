@@ -3,6 +3,7 @@ import { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import Calendar from "react-calendar";
 import { api } from "@/lib/api";
+import { useAuth } from "@/lib/auth";
 
 interface CalEvent {
     id: string;
@@ -13,18 +14,18 @@ interface CalEvent {
 }
 
 export default function CalendarView() {
+    const { user } = useAuth();
     const [date, setDate] = useState(new Date());
     const [events, setEvents] = useState<CalEvent[]>([]);
     const [includeTasks, setIncludeTasks] = useState(false);
     const fileRef = useRef<HTMLInputElement>(null);
 
     const fetchEvents = async () => {
+        if (user?.isGuest) return;
         try {
             const data = await api.getCalendar(includeTasks);
             setEvents(data);
-        } catch {
-            console.error("Failed to fetch calendar");
-        }
+        } catch {}
     };
 
     useEffect(() => {
@@ -36,19 +37,17 @@ export default function CalendarView() {
 
     const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
-        if (!file) return;
+        if (!file || user?.isGuest) return;
         try {
             await api.uploadICS(file);
             fetchEvents();
-        } catch (err) {
-            console.error("ICS upload failed:", err);
-        }
+        } catch {}
     };
 
     return (
-        <div>
-            {/* Calendar Widget */}
-            <div className="glass-card" style={{ padding: 16, marginBottom: 16 }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+            {/* Calendar */}
+            <div className="glass-card" style={{ padding: "16px 12px" }}>
                 <Calendar
                     onChange={(v) => setDate(v as Date)}
                     value={date}
@@ -56,134 +55,111 @@ export default function CalendarView() {
                 />
             </div>
 
-            {/* Controls Row */}
-            <div style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                marginBottom: 16,
-            }}>
-                {/* Show Tasks Toggle */}
-                <label style={{
+            {/* Controls */}
+            {!user?.isGuest && (
+                <div style={{
                     display: "flex",
+                    justifyContent: "space-between",
                     alignItems: "center",
-                    gap: 8,
-                    fontSize: 13,
-                    color: "#888",
-                    cursor: "pointer",
                 }}>
-                    <div
-                        onClick={() => setIncludeTasks(!includeTasks)}
+                    <label style={{
+                        display: "flex", alignItems: "center",
+                        gap: 8, fontSize: 13, color: "#555", cursor: "pointer",
+                    }}>
+                        <div
+                            onClick={() => setIncludeTasks(!includeTasks)}
+                            style={{
+                                width: 36, height: 20, borderRadius: 10,
+                                background: includeTasks ? "#6366f1" : "#1a1a1a",
+                                position: "relative",
+                                transition: "background 0.2s",
+                                cursor: "pointer",
+                                border: "1px solid #2a2a2a",
+                            }}
+                        >
+                            <motion.div
+                                animate={{ x: includeTasks ? 16 : 2 }}
+                                transition={{ type: "spring", stiffness: 500, damping: 30 }}
+                                style={{
+                                    width: 16, height: 16,
+                                    borderRadius: "50%",
+                                    background: "#fff",
+                                    position: "absolute",
+                                    top: 1,
+                                }}
+                            />
+                        </div>
+                        Show tasks
+                    </label>
+
+                    <button
+                        onClick={() => fileRef.current?.click()}
                         style={{
-                            width: 40,
-                            height: 22,
-                            borderRadius: 11,
-                            background: includeTasks ? "#667eea" : "#222",
-                            position: "relative",
-                            transition: "background 0.2s",
-                            cursor: "pointer",
+                            padding: "7px 12px", borderRadius: 8,
+                            background: "#0f0f0f", border: "1px solid #1e1e1e",
+                            color: "#555", fontSize: 12, cursor: "pointer",
                         }}
                     >
-                        <motion.div
-                            animate={{ x: includeTasks ? 20 : 2 }}
-                            transition={{ type: "spring", stiffness: 500, damping: 30 }}
-                            style={{
-                                width: 18,
-                                height: 18,
-                                borderRadius: "50%",
-                                background: "#fff",
-                                position: "absolute",
-                                top: 2,
-                            }}
-                        />
-                    </div>
-                    Show Tasks
-                </label>
+                        Import .ics
+                    </button>
+                    <input ref={fileRef} type="file" accept=".ics" onChange={handleUpload} style={{ display: "none" }} />
+                </div>
+            )}
 
-                {/* Upload ICS */}
-                <motion.button
-                    whileTap={{ scale: 0.95 }}
-                    onClick={() => fileRef.current?.click()}
-                    style={{
-                        padding: "8px 16px",
-                        borderRadius: 10,
-                        background: "#111",
-                        border: "1px solid #222",
-                        color: "#888",
-                        fontSize: 12,
-                        fontWeight: 600,
-                        cursor: "pointer",
-                    }}
-                >
-                    📤 Import ICS
-                </motion.button>
-                <input
-                    ref={fileRef}
-                    type="file"
-                    accept=".ics"
-                    onChange={handleUpload}
-                    style={{ display: "none" }}
-                />
-            </div>
-
-            {/* Events for Selected Day */}
+            {/* Events list */}
             <div>
-                <h3 style={{
-                    fontSize: 14,
-                    fontWeight: 600,
-                    color: "#888",
-                    marginBottom: 12,
-                }}>
+                <p style={{ fontSize: 13, color: "#444", marginBottom: 10 }}>
                     {date.toLocaleDateString("en", { weekday: "long", month: "long", day: "numeric" })}
-                </h3>
+                </p>
 
                 {dayEvents.length === 0 ? (
-                    <p style={{ color: "#444", fontSize: 13, textAlign: "center", padding: 40 }}>
-                        No events for this day
+                    <p style={{ color: "#2a2a2a", fontSize: 13, textAlign: "center", padding: "32px 0" }}>
+                        {user?.isGuest ? "Sign in to sync calendar events" : "Nothing scheduled"}
                     </p>
                 ) : (
-                    <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                    <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
                         {dayEvents.map((ev) => (
-                            <motion.div
+                            <div
                                 key={ev.id}
-                                initial={{ opacity: 0, x: -10 }}
-                                animate={{ opacity: 1, x: 0 }}
                                 style={{
-                                    padding: "12px 16px",
-                                    borderRadius: 12,
-                                    background: "#111",
-                                    border: `1px solid ${ev.type === "habit_task" ? "#667eea30" : "#1a1a1a"}`,
+                                    padding: "10px 14px",
+                                    borderRadius: 10, background: "#0f0f0f",
+                                    border: `1px solid ${ev.type === "habit_task" ? "#6366f120" : "#1a1a1a"}`,
                                     display: "flex",
                                     justifyContent: "space-between",
                                     alignItems: "center",
+                                    gap: 10,
                                 }}
                             >
-                                <div>
-                                    <p style={{ fontSize: 14, fontWeight: 500, color: "#fff" }}>{ev.title}</p>
+                                <div style={{ minWidth: 0 }}>
+                                    <p style={{
+                                        fontSize: 14, color: "#ccc",
+                                        overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
+                                    }}>
+                                        {ev.title}
+                                    </p>
                                     {ev.start_time && (
-                                        <p style={{ fontSize: 11, color: "#555", marginTop: 2 }}>
+                                        <p style={{ fontSize: 11, color: "#444", marginTop: 2 }}>
                                             {new Date(ev.start_time).toLocaleTimeString("en", {
-                                                hour: "2-digit",
-                                                minute: "2-digit",
+                                                hour: "2-digit", minute: "2-digit",
                                             })}
                                             {ev.end_time && ` – ${new Date(ev.end_time).toLocaleTimeString("en", {
-                                                hour: "2-digit",
-                                                minute: "2-digit",
+                                                hour: "2-digit", minute: "2-digit",
                                             })}`}
                                         </p>
                                     )}
                                 </div>
                                 <span style={{
                                     fontSize: 10,
-                                    padding: "4px 8px",
-                                    borderRadius: 6,
-                                    background: ev.type === "habit_task" ? "#667eea20" : "#1a1a1a",
-                                    color: ev.type === "habit_task" ? "#667eea" : "#555",
-                                    fontWeight: 600,
+                                    padding: "3px 7px", borderRadius: 5,
+                                    background: ev.type === "habit_task" ? "#6366f115" : "#1a1a1a",
+                                    color: ev.type === "habit_task" ? "#818cf8" : "#444",
+                                    fontWeight: 500, flexShrink: 0,
+                                    textTransform: "uppercase", letterSpacing: "0.5px",
                                 }}>
-                                    {ev.type === "habit_task" ? "TASK" : "EVENT"}
+                                    {ev.type === "habit_task" ? "task" : "event"}
                                 </span>
-                            </motion.div>
+                            </div>
                         ))}
                     </div>
                 )}
