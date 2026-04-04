@@ -1,0 +1,208 @@
+<mxfile host="app.diagrams.net" modified="2026-04-04T12:00:00.000Z" agent="HabitLens" version="21.0.0" type="github">
+  <diagram id="HabitLens-Architecture" name="HabitLens Architecture">
+    <mxGraphModel dx="1422" dy="762" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1654" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- Title -->
+        <mxCell id="title" value="HabitLens – System Architecture" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=22;fontStyle=1;fontColor=#1a1a2e;" vertex="1" parent="1">
+          <mxGeometry x="427" y="30" width="800" height="40" as="geometry" />
+        </mxCell>
+
+        <!-- ═══════════════ FRONTEND ZONE ═══════════════ -->
+        <mxCell id="fe-zone" value="🌐  Frontend  (Vercel)" style="swimlane;startSize=30;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;fontSize=13;rounded=1;arcSize=5;" vertex="1" parent="1">
+          <mxGeometry x="80" y="120" width="340" height="320" as="geometry" />
+        </mxCell>
+
+        <mxCell id="nextjs" value="Next.js 15&#xa;(React 19, TypeScript)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1ba1e2;strokeColor=#006EAF;fontColor=#ffffff;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="140" y="170" width="220" height="50" as="geometry" />
+        </mxCell>
+
+        <mxCell id="pages" value="Pages:&#xa;Dashboard · Calendar · Stats · Settings · Demo" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666;fontColor=#333;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="120" y="240" width="260" height="55" as="geometry" />
+        </mxCell>
+
+        <mxCell id="pwa" value="PWA  +  Framer Motion  +  Chart.js" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666;fontColor=#333;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="120" y="315" width="260" height="40" as="geometry" />
+        </mxCell>
+
+        <mxCell id="tailwind" value="TailwindCSS  +  Custom CSS Tokens" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666;fontColor=#333;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="120" y="375" width="260" height="40" as="geometry" />
+        </mxCell>
+
+        <!-- ═══════════════ AUTH ZONE ═══════════════ -->
+        <mxCell id="auth-zone" value="🔐  Auth Layer" style="swimlane;startSize=30;fillColor=#fff2cc;strokeColor=#d6b656;fontStyle=1;fontSize=13;rounded=1;arcSize=5;" vertex="1" parent="1">
+          <mxGeometry x="80" y="480" width="340" height="130" as="geometry" />
+        </mxCell>
+
+        <mxCell id="google-oauth" value="Google OAuth 2.0" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ea4335;strokeColor=#b31412;fontColor=#ffffff;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="120" y="520" width="120" height="50" as="geometry" />
+        </mxCell>
+
+        <mxCell id="jwt" value="JWT Tokens&#xa;(python-jose)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f0a30a;strokeColor=#BD7000;fontColor=#000;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="260" y="520" width="120" height="50" as="geometry" />
+        </mxCell>
+
+        <!-- ═══════════════ BACKEND ZONE ═══════════════ -->
+        <mxCell id="be-zone" value="⚙️  Backend  (Docker / Render)" style="swimlane;startSize=30;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;fontSize=13;rounded=1;arcSize=5;" vertex="1" parent="1">
+          <mxGeometry x="540" y="120" width="340" height="320" as="geometry" />
+        </mxCell>
+
+        <mxCell id="fastapi" value="FastAPI  +  Uvicorn" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#009879;strokeColor=#007057;fontColor=#ffffff;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="600" y="170" width="220" height="50" as="geometry" />
+        </mxCell>
+
+        <mxCell id="routes" value="Routers:&#xa;Auth · Habits · Tasks · Calendar&#xa;Dashboard · Collage · Quotes · Reflection" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666;fontColor=#333;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="580" y="240" width="260" height="65" as="geometry" />
+        </mxCell>
+
+        <mxCell id="services" value="Services:&#xa;AI Reflection (Gemini API) · Image Utils · iCal" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666;fontColor=#333;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="580" y="325" width="260" height="50" as="geometry" />
+        </mxCell>
+
+        <mxCell id="sqlalchemy" value="SQLAlchemy ORM  +  Pydantic Schemas" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666;fontColor=#333;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="580" y="385" width="260" height="40" as="geometry" />
+        </mxCell>
+
+        <!-- ═══════════════ DATA ZONE ═══════════════ -->
+        <mxCell id="data-zone" value="🗄️  Data Layer" style="swimlane;startSize=30;fillColor=#f8cecc;strokeColor=#b85450;fontStyle=1;fontSize=13;rounded=1;arcSize=5;" vertex="1" parent="1">
+          <mxGeometry x="540" y="480" width="340" height="130" as="geometry" />
+        </mxCell>
+
+        <mxCell id="postgres" value="PostgreSQL 16&#xa;(psycopg2)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#336791;strokeColor=#1a355c;fontColor=#ffffff;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="580" y="520" width="130" height="60" as="geometry" />
+        </mxCell>
+
+        <mxCell id="uploads" value="File Storage&#xa;/uploads (local)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666;fontColor=#333;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="730" y="520" width="120" height="60" as="geometry" />
+        </mxCell>
+
+        <!-- ═══════════════ EXTERNAL ZONE ═══════════════ -->
+        <mxCell id="ext-zone" value="☁️  External Services" style="swimlane;startSize=30;fillColor=#e1d5e7;strokeColor=#9673a6;fontStyle=1;fontSize=13;rounded=1;arcSize=5;" vertex="1" parent="1">
+          <mxGeometry x="1000" y="120" width="280" height="280" as="geometry" />
+        </mxCell>
+
+        <mxCell id="gemini" value="Google Gemini API&#xa;(AI Reflections)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#4285f4;strokeColor=#1a56db;fontColor=#ffffff;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="1040" y="165" width="200" height="55" as="geometry" />
+        </mxCell>
+
+        <mxCell id="google-auth-ext" value="Google OAuth API" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ea4335;strokeColor=#b31412;fontColor=#ffffff;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="1040" y="240" width="200" height="45" as="geometry" />
+        </mxCell>
+
+        <mxCell id="vercel" value="Vercel&#xa;(Frontend Deploy)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#000000;strokeColor=#333;fontColor=#ffffff;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="1040" y="305" width="200" height="45" as="geometry" />
+        </mxCell>
+
+        <mxCell id="render" value="Render.com&#xa;(Backend Deploy)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#46e3b7;strokeColor=#1aab7e;fontColor=#000;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="1040" y="360" width="200" height="45" as="geometry" />
+        </mxCell>
+
+        <!-- ═══════════════ DOCKER ZONE ═══════════════ -->
+        <mxCell id="docker-zone" value="🐳  Containerisation  (Docker)" style="swimlane;startSize=30;fillColor=#dae8fc;strokeColor=#2496ed;fontStyle=1;fontSize=13;rounded=1;arcSize=5;" vertex="1" parent="1">
+          <mxGeometry x="280" y="660" width="640" height="120" as="geometry" />
+        </mxCell>
+
+        <mxCell id="docker-fe" value="habitlens_frontend&#xa;(node:20-alpine)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#2496ed;strokeColor=#1171b8;fontColor=#fff;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="310" y="700" width="160" height="55" as="geometry" />
+        </mxCell>
+
+        <mxCell id="docker-be" value="habitlens_backend&#xa;(python:3.11-slim)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#2496ed;strokeColor=#1171b8;fontColor=#fff;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="500" y="700" width="160" height="55" as="geometry" />
+        </mxCell>
+
+        <mxCell id="docker-db" value="habitlens_db&#xa;(postgres:16-alpine)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#2496ed;strokeColor=#1171b8;fontColor=#fff;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="690" y="700" width="160" height="55" as="geometry" />
+        </mxCell>
+
+        <!-- ═══════════════ LEGEND ═══════════════ -->
+        <mxCell id="legend-box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666;fontColor=#333;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="1000" y="480" width="280" height="160" as="geometry" />
+        </mxCell>
+        <mxCell id="legend-title" value="Legend" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=13;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1010" y="488" width="100" height="25" as="geometry" />
+        </mxCell>
+        <mxCell id="leg1" value="" style="endArrow=block;endFill=1;strokeColor=#0050ef;strokeWidth=2;" edge="1" parent="1">
+          <mxGeometry x="1010" y="525" width="50" height="10" relative="1" as="geometry">
+            <mxPoint x="1010" y="525" as="sourcePoint" />
+            <mxPoint x="1060" y="525" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="leg1-label" value="HTTP / REST Request" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="1068" y="517" width="200" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="leg2" value="" style="endArrow=block;endFill=1;strokeColor=#009879;strokeWidth=2;dashed=1;" edge="1" parent="1">
+          <mxGeometry x="1010" y="555" width="50" height="10" relative="1" as="geometry">
+            <mxPoint x="1010" y="555" as="sourcePoint" />
+            <mxPoint x="1060" y="555" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="leg2-label" value="Database Query (ORM)" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="1068" y="547" width="200" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="leg3" value="" style="endArrow=block;endFill=1;strokeColor=#9673a6;strokeWidth=2;dashed=1;" edge="1" parent="1">
+          <mxGeometry x="1010" y="585" width="50" height="10" relative="1" as="geometry">
+            <mxPoint x="1010" y="585" as="sourcePoint" />
+            <mxPoint x="1060" y="585" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="leg3-label" value="External API Call" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="1068" y="577" width="200" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="leg4" value="" style="endArrow=block;endFill=1;strokeColor=#2496ed;strokeWidth=2;" edge="1" parent="1">
+          <mxGeometry x="1010" y="615" width="50" height="10" relative="1" as="geometry">
+            <mxPoint x="1010" y="615" as="sourcePoint" />
+            <mxPoint x="1060" y="615" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="leg4-label" value="Container Internal Network" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="1068" y="607" width="200" height="20" as="geometry" />
+        </mxCell>
+
+        <!-- ═══════════════ ARROWS ═══════════════ -->
+
+        <!-- Frontend → Backend (HTTP REST) -->
+        <mxCell id="arrow-fe-be" value="REST API&#xa;HTTPS/JSON" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;strokeColor=#0050ef;strokeWidth=2;fontColor=#0050ef;fontStyle=1;" edge="1" parent="1" source="fe-zone" target="be-zone">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Frontend → Auth -->
+        <mxCell id="arrow-fe-auth" value="Login Flow" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#d6b656;strokeWidth=2;fontColor=#d6b656;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="fe-zone" target="auth-zone">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Auth → Backend -->
+        <mxCell id="arrow-auth-be" value="JWT Token" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#d6b656;strokeWidth=2;fontColor=#d6b656;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="auth-zone" target="be-zone">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Backend → Database -->
+        <mxCell id="arrow-be-db" value="SQLAlchemy ORM" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#009879;strokeWidth=2;fontColor=#009879;fontStyle=1;dashed=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="be-zone" target="data-zone">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Backend → External Services -->
+        <mxCell id="arrow-be-ext" value="API Calls" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#9673a6;strokeWidth=2;fontColor=#9673a6;dashed=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="be-zone" target="ext-zone">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Frontend → Docker -->
+        <mxCell id="arrow-fe-docker" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#2496ed;strokeWidth=1.5;dashed=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.25;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="fe-zone" target="docker-zone">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Backend → Docker -->
+        <mxCell id="arrow-be-docker" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#2496ed;strokeWidth=1.5;dashed=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="be-zone" target="docker-zone">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- DB → Docker -->
+        <mxCell id="arrow-db-docker" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#2496ed;strokeWidth=1.5;dashed=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.75;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="data-zone" target="docker-zone">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
